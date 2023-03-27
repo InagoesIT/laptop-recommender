@@ -25,9 +25,9 @@ class DataFormatter:
             for file_name in file_names:
                 full_file_name = os.path.join(root, file_name)
                 df = pd.read_csv(full_file_name)
-                df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
-                # df.drop('Source Url', axis=1, inplace=True)
-                # df.drop('Url', axis=1, inplace=True)
+                # df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+                df.drop('Source Url', axis=1, inplace=True)
+                df.drop('Url', axis=1, inplace=True)
                 df.to_csv(full_file_name)
 
     def delete_first_3_rows(self):
