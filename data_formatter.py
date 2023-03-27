@@ -24,25 +24,21 @@ class DataFormatter:
         for root, dir_names, file_names in os.walk(self.files_dir):
             for file_name in file_names:
                 full_file_name = os.path.join(root, file_name)
-                df = pd.read_csv(full_file_name)
-                df.drop('Source Url', axis=1, inplace=True)
-                df.drop('Url', axis=1, inplace=True)
-                df.to_csv(full_file_name)
+                data_frame = pd.read_csv(full_file_name)
+                data_frame.drop('Source Url', axis=1, inplace=True)
+                data_frame.drop('Url', axis=1, inplace=True)
+                data_frame.to_csv(full_file_name)
 
-    def delete_first_3_rows(self):# "2-in-1_Laptops.csv",
-        files_to_delete_from = ["Battery_Life_Laptops.csv", "Business_Laptops.csv",
-                                "Laptops_for_College_Students.csv", "Laptops_for_Video_Editing.csv"]
+    def delete_first_3_rows(self):
         for root, dir_names, file_names in os.walk(self.files_dir):
             for file_name in file_names:
-                if file_name not in files_to_delete_from:
-                    continue
                 full_file_name = os.path.join(root, file_name)
-                df = pd.read_csv(full_file_name)
-                df.drop(index=[0, 1, 2], inplace=True)
-                df.to_csv(full_file_name)
+                data_frame = pd.read_csv(full_file_name)
+                data_frame.drop(index=[0, 1, 2], inplace=True)
+                data_frame.to_csv(full_file_name)
+
+    # def reformat_files(self):
 
 
 if __name__ == '__main__':
     dataFormatter = DataFormatter('resources')
-    dataFormatter.delete_first_3_rows()
-
