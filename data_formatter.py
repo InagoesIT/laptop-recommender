@@ -26,11 +26,11 @@ class DataFormatter:
                 full_file_name = os.path.join(root, file_name)
                 data_frame = pd.read_csv(full_file_name)
                 data_frame.drop('Source Url', axis=1, inplace=True)
-                print(data_frame)
+                data_frame.drop('Url', axis=1, inplace=True)
+                data_frame.to_csv(full_file_name)
 
 
 if __name__ == '__main__':
     dataFormatter = DataFormatter('resources')
-    dataFormatter.add_csv_ending()
     dataFormatter.reformat_files()
 
