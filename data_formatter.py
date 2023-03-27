@@ -20,25 +20,17 @@ class DataFormatter:
                 full_file_name = os.path.join(root, file_name)
                 os.rename(full_file_name, f"{full_file_name}.csv")
 
-    def delete_first_2_columns(self):
+    def reformat_files(self):
         for root, dir_names, file_names in os.walk(self.files_dir):
             for file_name in file_names:
                 full_file_name = os.path.join(root, file_name)
                 data_frame = pd.read_csv(full_file_name)
                 data_frame.drop('Source Url', axis=1, inplace=True)
-                data_frame.drop('Url', axis=1, inplace=True)
-                data_frame.to_csv(full_file_name)
-
-    def delete_first_3_rows(self):
-        for root, dir_names, file_names in os.walk(self.files_dir):
-            for file_name in file_names:
-                full_file_name = os.path.join(root, file_name)
-                data_frame = pd.read_csv(full_file_name)
-                data_frame.drop(index=[0, 1, 2], inplace=True)
-                data_frame.to_csv(full_file_name)
-
-    # def reformat_files(self):
+                print(data_frame)
 
 
 if __name__ == '__main__':
     dataFormatter = DataFormatter('resources')
+    dataFormatter.add_csv_ending()
+    dataFormatter.reformat_files()
+
