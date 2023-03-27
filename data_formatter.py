@@ -25,13 +25,15 @@ class DataFormatter:
             for file_name in file_names:
                 full_file_name = os.path.join(root, file_name)
                 df = pd.read_csv(full_file_name)
-                df.drop('Source Url', axis=1, inplace=True)
-                df.drop('Url', axis=1, inplace=True)
+                df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+                # df.drop('Source Url', axis=1, inplace=True)
+                # df.drop('Url', axis=1, inplace=True)
                 df.to_csv(full_file_name)
 
-    def delete_first_3_rows(self):# "2-in-1_Laptops.csv",
-        files_to_delete_from = ["Battery_Life_Laptops.csv", "Business_Laptops.csv",
-                                "Laptops_for_College_Students.csv", "Laptops_for_Video_Editing.csv"]
+    def delete_first_3_rows(self):
+        #"2-in-1_Laptops.csv", "Battery_Life_Laptops.csv", "Business_Laptops.csv",
+        # "Laptops_for_College_Students.csv", "Laptops_for_Video_Editing.csv"
+        files_to_delete_from = ["Business_Laptops.csv"]
         for root, dir_names, file_names in os.walk(self.files_dir):
             for file_name in file_names:
                 if file_name not in files_to_delete_from:
