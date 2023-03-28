@@ -137,10 +137,10 @@ class DataFormatter:
                 df.rename(columns={"WhereToBuy": "Price"}, inplace=True)
                 df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
 
-                df.Price.replace(r'(\$(\d|,|.|^;)+;).+', r'\1',
+                df.Price.replace(r'(\$(\d|,|\.)+).+', r'\1',
                                  regex=True, inplace=True)
 
-                print(df)
+                df.to_csv(full_file_name)
 
 
 if __name__ == '__main__':
