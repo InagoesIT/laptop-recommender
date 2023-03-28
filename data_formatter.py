@@ -6,10 +6,16 @@ import pandas as pd
 
 
 class DataFormatter:
-    def __init__(self, files_dir):
+    def __init__(self, files_dir, columns_filename):
         self.files_dir = files_dir
         self.common_cols = []
-        self.set_common_cols()
+        self.columns_filename = columns_filename
+        self.load_common_cols()
+
+    def load_common_cols(self):
+        with open(self.columns_filename, 'r') as f:
+            column_names = [item.rstrip() for item in f.readlines()]
+            self.common_cols = column_names
 
     def rename_files(self):
         pattern = r'(The_Best_)(.+)(_for|_in)'
@@ -85,8 +91,6 @@ class DataFormatter:
         df = pd.read_csv(full_file_name)
         new_df = pd.DataFrame()
         pattern = r"#\w+:(.+)"
-        column_nrs = ["Column 4", "Column 5", "Column 6", "Column 7", "Column 8", "Column 9",
-                      "Column 10", "Column 11", "Column 12"]
 
         for index, row in df.iterrows():
             column_items = []
@@ -117,14 +121,28 @@ class DataFormatter:
 
         return new_df
 
-    def create_new_dfs(self):
+    def write_new_dfs(self):
         for root, dir_names, file_names in os.walk(self.files_dir):
             for file_name in file_names:
                 full_file_name = os.path.join(root, file_name)
                 new_df = self.create_new_dfs_with_cols_from(full_file_name)
-                new_df.to_csv(f"new/{file_name}")
+                new_df.to_csv(full_file_name)
+
+    def format_price_and_rating_column(self):
+        for root, dir_names, file_names in os.walk(self.files_dir):
+            for file_name in file_names:
+                full_file_name = os.path.join(root, file_name)
+                df = pd.read_csv(full_file_name)
+
+                df.rename(columns={"WhereToBuy": "Price"}, inplace=True)
+                df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+
+                df.Price.replace(r'(\$(\d|,|.|^;)+;).+', r'\1',
+                                 regex=True, inplace=True)
+
+                print(df)
 
 
 if __name__ == '__main__':
-    dataFormatter = DataFormatter('resources')
-    dataFormatter.create_new_dfs()
+    dataFormatter = DataFormatter('resources/data', 'resources/common_cols.txt')
+    dataFormatter.format_price_and_rating_column()
