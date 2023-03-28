@@ -9,6 +9,7 @@ class DataFormatter:
     def __init__(self, files_dir):
         self.files_dir = files_dir
         self.common_cols = []
+        self.set_common_cols()
 
     def rename_files(self):
         pattern = r'(The_Best_)(.+)(_for|_in)'
@@ -80,43 +81,50 @@ class DataFormatter:
 
         self.get_cols_intersection(df_list)
 
+    def create_new_dfs_with_cols_from(self, full_file_name):
+        df = pd.read_csv(full_file_name)
+        new_df = pd.DataFrame()
+        pattern = r"#\w+:(.+)"
+        column_nrs = ["Column 4", "Column 5", "Column 6", "Column 7", "Column 8", "Column 9",
+                      "Column 10", "Column 11", "Column 12"]
 
-    def create_new_df_with_cols_from(self):
+        for index, row in df.iterrows():
+            column_items = []
+            # it's the name!
+            if "#" not in row[1]:
+                for i in range(1, len(row)):
+                    column_items.append(row[i])
+                try:
+                    new_df.insert(0, "Name", np.array(column_items))
+                except ValueError:
+                    pass
+                continue
+
+            for col_name in self.common_cols:
+                if re.search(f"{col_name}:", row["Column 4"]):
+                    for i in range(1, len(row)):
+                        items = re.findall(pattern, row[i])
+
+                        if len(items) == 0:
+                            column_items.append(None)
+
+                            continue
+                        column_items.append(items[0])
+                    try:
+                        new_df.insert(0, col_name, np.array(column_items))
+                    except ValueError:
+                        pass
+
+        return new_df
+
+    def create_new_dfs(self):
         for root, dir_names, file_names in os.walk(self.files_dir):
             for file_name in file_names:
                 full_file_name = os.path.join(root, file_name)
-                df = pd.read_csv(full_file_name)
-
-                new_df = pd.DataFrame()
-                pattern = r"#\w+:(.+)"
-                column_nrs = ["Column 4", "Column 5", "Column 6", "Column 7", "Column 8", "Column 9",
-                                "Column 10", "Column 11", "Column 12"]
-
-
-                for index, row in df.iterrows():
-                    column_items = []
-                    for col_name in self.common_cols:
-                        try:
-                            if re.search(f"{col_name}:", row["Column 4"]):
-                                for i in range(1, len(row)):
-                                    # print(row)
-                                    # print(row[i])
-                                    items = re.findall(pattern, row[i])
-                                    if len(items) == 0:
-                                        column_items.append(None)
-                                    column_items.append(items[0])
-                                print(column_items)
-                                new_df.insert(0, col_name, np.array(column_items))
-                        except KeyError:
-                            pass
-
-
-                # print(new_df)
-                # new_df.to_csv(f"resources/new/{file_name}_1.csv")
-                v=1
+                new_df = self.create_new_dfs_with_cols_from(full_file_name)
+                new_df.to_csv(f"new/{file_name}")
 
 
 if __name__ == '__main__':
     dataFormatter = DataFormatter('resources')
-    dataFormatter.set_common_cols()
-    dataFormatter.create_new_df_with_cols_from()
+    dataFormatter.create_new_dfs()
