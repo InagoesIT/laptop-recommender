@@ -154,7 +154,19 @@ class DataFormatter:
 
                 df.to_csv(full_file_name)
 
+    def move_name_first(self):
+        for root, dir_names, file_names in os.walk(self.files_dir):
+            for file_name in file_names:
+                full_file_name = os.path.join(root, file_name)
+                df = pd.read_csv(full_file_name)
+
+                name_column = df.pop('Name')
+                df.insert(0, 'Name', name_column)
+                df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+
+                df.to_csv(full_file_name)
+
 
 if __name__ == '__main__':
     dataFormatter = DataFormatter('resources/data', 'resources/common_cols.txt')
-    dataFormatter.format_rating_column()
+    dataFormatter.move_name_first()
