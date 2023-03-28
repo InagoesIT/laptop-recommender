@@ -128,7 +128,7 @@ class DataFormatter:
                 new_df = self.create_new_dfs_with_cols_from(full_file_name)
                 new_df.to_csv(full_file_name)
 
-    def format_price_and_rating_column(self):
+    def format_price_column(self):
         for root, dir_names, file_names in os.walk(self.files_dir):
             for file_name in file_names:
                 full_file_name = os.path.join(root, file_name)
@@ -142,7 +142,19 @@ class DataFormatter:
 
                 df.to_csv(full_file_name)
 
+    def format_rating_column(self):
+        for root, dir_names, file_names in os.walk(self.files_dir):
+            for file_name in file_names:
+                full_file_name = os.path.join(root, file_name)
+                df = pd.read_csv(full_file_name)
+
+                df.EditorsRating.replace(r'.*(\d+.\d+).*', r'\1',
+                                         regex=True, inplace=True)
+                df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+
+                df.to_csv(full_file_name)
+
 
 if __name__ == '__main__':
     dataFormatter = DataFormatter('resources/data', 'resources/common_cols.txt')
-    dataFormatter.format_price_and_rating_column()
+    dataFormatter.format_rating_column()
