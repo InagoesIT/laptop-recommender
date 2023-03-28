@@ -4,6 +4,8 @@ import re
 import numpy as np
 import pandas as pd
 
+from pathlib import Path
+
 
 class DataFormatter:
     def __init__(self, files_dir, columns_filename):
@@ -166,7 +168,23 @@ class DataFormatter:
 
                 df.to_csv(full_file_name)
 
+    def merge_csv(self):
+        source_files = sorted(Path(self.files_dir).glob('*.csv'))
+
+        dataframes = []
+        for file in source_files:
+            df = pd.read_csv(file)
+            df.insert(0, 'Category', file.name[:-4])
+            df = df.loc[:, ~df.columns.str.contains('^Unnamed')]
+            dataframes.append(df)
+
+        df_all = pd.concat(dataframes)
+        df_all.to_csv("resources/all_laptops.csv")
+        df_all = pd.read_csv("resources/all_laptops.csv")
+        df_all = df_all.loc[:, ~df_all.columns.str.contains('^Unnamed')]
+        df_all.to_csv("resources/all_laptops.csv")
+
 
 if __name__ == '__main__':
     dataFormatter = DataFormatter('resources/data', 'resources/common_cols.txt')
-    dataFormatter.move_name_first()
+    dataFormatter.merge_csv()
