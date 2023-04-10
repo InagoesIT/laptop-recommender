@@ -186,5 +186,5 @@ class DataFormatter:
 
 
 if __name__ == '__main__':
-    dataFormatter = DataFormatter('resources/data', 'resources/common_cols.txt')
+    dataFormatter = DataFormatter('resources/data', 'data_processing/resources/common_cols.txt')
     dataFormatter.merge_csv()
