@@ -180,11 +180,11 @@ class DataFormatter:
 
         df_all = pd.concat(dataframes)
         df_all.to_csv("resources/all_laptops.csv")
-        df_all = pd.read_csv("resources/all_laptops.csv")
+        df_all = pd.read_csv("../resources/all_laptops.csv")
         df_all = df_all.loc[:, ~df_all.columns.str.contains('^Unnamed')]
         df_all.to_csv("resources/all_laptops.csv")
 
 
 if __name__ == '__main__':
-    dataFormatter = DataFormatter('resources/data', 'data_processing/resources/common_cols.txt')
+    dataFormatter = DataFormatter('../resources/data', 'data_processing/resources/common_cols.txt')
     dataFormatter.merge_csv()
