@@ -2,10 +2,11 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 import os
-import random
 from dotenv import load_dotenv
 
 from discord_bot.laptop_filter import LaptopFilter
+
+from table2ascii import table2ascii as t2a, PresetStyle
 
 load_dotenv()
 
@@ -38,7 +39,14 @@ async def recommend(interaction: discord.Interaction, max_price: int, min_rating
     df_with_filtered_laptops = laptop_filter.sort_and_filter_by(price=max_price, rating=min_rating)
     # await interaction.response.send_message(f"{interaction.user.name} said: {max_price} with {min_rating}",
     #                                         ephemeral=True)
-    await interaction.response.send_message(df_with_filtered_laptops,
+    output = t2a(
+        header=df_with_filtered_laptops.columns.tolist(),
+        body=df_with_filtered_laptops.values.tolist()
+    )
+
+    print(output)
+
+    await interaction.response.send_message(f"```\n{df_with_filtered_laptops}\n```",
                                             ephemeral=True)
 
 

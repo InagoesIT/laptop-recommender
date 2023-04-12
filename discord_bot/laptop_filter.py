@@ -17,11 +17,11 @@ class LaptopFilter:
         self.df.EditorsRating = self.df.EditorsRating.astype(float)
         self.df = self.df.loc[:, ~self.df.columns.str.contains('^Unnamed')]
 
-    def sort_and_filter_by(self, price, rating=None, laptops_nr=15):
-        new_df = self.df[self.df['Price'] <= price]
-        new_df.sort_values(by=['Price'], inplace=True)
-        if rating is None:
-            return new_df
-        new_df = self.df[self.df['EditorsRating'] >= rating]
-        new_df.sort_values(by=['Price'], inplace=True)
+    def sort_and_filter_by(self, price, rating=None, laptops_nr=5):
+        new_df = self.df[self.df['Price'] <= price].copy()
+        filter_by = ['Price']
+        if rating is not None:
+            filter_by.append('EditorsRating')
+            new_df = new_df[new_df['EditorsRating'] >= rating].copy()
+        new_df.sort_values(by=filter_by, inplace=True)
         return new_df.head(laptops_nr)
